@@ -1,0 +1,60 @@
+﻿<Window x:Class="MCPMappingsLookup.Views.Main.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MCPMappingsLookup.Views.Main"
+        xmlns:converters="clr-namespace:MCPMappingsLookup.Converters"
+        mc:Ignorable="d"
+        Title="MCP Remapped Names Lookup"
+        MinHeight="300"
+        MinWidth="440"
+        Width="500"
+        Height="500" 
+        Style="{DynamicResource CustomWindowStyle}">
+    <Window.Resources>
+        <converters:RadioToEnumConverter x:Key="RadioToEnum"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid>
+            <TextBlock Text="Search for..." VerticalAlignment="Top" HorizontalAlignment="Left" Padding="0 5 5 5" Margin="10,30,0,0" TextDecorations="{x:Null}" FontStyle="Italic" FontWeight="Bold"/>
+            <TextBox Text="{Binding Search.FindInput, UpdateSourceTrigger=PropertyChanged}" ToolTip="What to look for" Padding="5" Margin="10,56,205,0" TextWrapping="Wrap" VerticalContentAlignment="Center" VerticalAlignment="Top" Height="30"/>
+            <CheckBox IsChecked="{Binding Search.SearchAtIndex, UpdateSourceTrigger=PropertyChanged}" ToolTip="Searches for a result at a given index. E.g. if you need to search for something like 'Provider' and want to find 'IWorldProvider', add 6 spaces (for IWorld), they will be treated as 'ignore these characters, i just care about the index', then after those spaces type Provider. DONT ADD SPACES IN THE MIDDLE OF THE SEARCH VAULE, ONLY THE START!!!! Otherwise... crash probably" ToolTipService.ShowDuration="30000" Content="Search at index" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="20" Width="110"/>
+            <CheckBox IsChecked="{Binding Search.CapsSensitive, UpdateSourceTrigger=PropertyChanged}" ToolTip="If the search is caps sensitive. E.g. Trying to find 'HellowWorld', if caps sensitive enabled, searching 'hello' wont return anything. Searching 'Hello' will" ToolTipService.ShowDuration="30000" Content="Case Sensitive" Margin="120,33,205,0" VerticalAlignment="Top" Height="20"/>
+            <CheckBox IsChecked="{Binding Search.SearchForExact, UpdateSourceTrigger=PropertyChanged}" ToolTip="Searches for an exact value, this is best to be used with Search at Index. If not with Search at Index, Trying to find 'HelloThere', if search exact is enabled, searching for 'hello' returns false, same with 'HelloTher'. If Search at index is enabled and search exact enabled, it will search for the exact text at the indexes, rather than the whole word. so if trying to find 'HelloThere', '   loTh' returns true, '  lloTe' returns false, ' elloThe' returns true" ToolTipService.ShowDuration="30000" Content="Search Exact" Margin="120,10,205,0" VerticalAlignment="Top" Height="20"/>
+            <Grid Margin="0,10,90,0" HorizontalAlignment="Right" Width="110" Height="76" VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Padding="1" HorizontalAlignment="Center" FontStyle="Italic"><Run Text="Search fo"/><Run Text="r..."/><Run BaselineAlignment="Center" FontSize="9" Text=" (Mappings)"/></TextBlock>
+                <RadioButton IsChecked="{Binding Path=Search.FindType, Converter={StaticResource RadioToEnum}, ConverterParameter=Obfuscated, UpdateSourceTrigger=PropertyChanged}" ToolTip="Find Searge (semi-obfuscated) names, by inputting in MCP names. E.g, find the Searge name for 'getItemStacks'" Content="Obfuscated" Height="Auto" Grid.Row="1"/>
+                <RadioButton IsChecked="{Binding Path=Search.FindType, Converter={StaticResource RadioToEnum}, ConverterParameter=Searge, UpdateSourceTrigger=PropertyChanged}" ToolTip="Find MCP (readable) variable names, by inputting in Searge names. E.g, find the MCP name for 'func_892348_c'" Content="Searge" Height="Auto" Grid.Row="2"/>
+                <RadioButton IsChecked="{Binding Path=Search.FindType, Converter={StaticResource RadioToEnum}, ConverterParameter=MCP, UpdateSourceTrigger=PropertyChanged}" ToolTip="Find MCP (readable) variable names, by inputting in Searge names. E.g, find the MCP name for 'func_892348_c'" Content="MCP" Height="Auto" Grid.Row="3"/>
+            </Grid>
+            <Grid HorizontalAlignment="Right" Width="80" VerticalAlignment="Top" Height="76" Margin="0,10,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Padding="1" HorizontalAlignment="Center" FontStyle="Italic"><Run Text="Show..."/><Run FontSize="9" BaselineAlignment="Center" Text=" (Results)"/></TextBlock>
+                <CheckBox IsChecked="{Binding Search.FindClasses, UpdateSourceTrigger=PropertyChanged}" ToolTip="Searches for all classes. ONLY WORKS WHEN SEARCHING FOR OBFUSCATED THINGS, OR MCP THINGS. Doesnt work for searge... yet" Content="Classes" Height="Auto" Grid.Row="1"/>
+                <CheckBox IsChecked="{Binding Search.FindFields, UpdateSourceTrigger=PropertyChanged}" ToolTip="Show all the fields found" Content="Fields" Height="Auto" Grid.Row="2"/>
+                <CheckBox IsChecked="{Binding Search.FindFunctions, UpdateSourceTrigger=PropertyChanged}" ToolTip="Show all the functions found" Content="Functions" Height="Auto" Grid.Row="3"/>
+            </Grid>
+            <TextBox Margin="10,91,10,10" 
+                     Background="Transparent"
+                     IsReadOnly="True"
+                     FontSize="14"
+                     FontFamily="Consolas"
+                     Text="{Binding Search.Results, UpdateSourceTrigger=PropertyChanged}"/>
+        </Grid>
+    </Grid>
+</Window>
